@@ -314,5 +314,6 @@ $form1.ShowDialog()
 clear
 }
 
-
+#If you want to just run SamOnboarder, just uncomment the next line, and comment the line after it.
+#SamOnboarder
 Generate-Launcher
