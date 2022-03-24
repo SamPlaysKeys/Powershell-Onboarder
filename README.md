@@ -5,4 +5,4 @@
  
  When in use, this is compiled into an EXE, I use Visual Studio to edit the manifest file, forcing it to search for an administrator credential.
 
-"Chris Onboarder" is an additional onboard my coworker built and gave me permission to use. It is a simplified onboarder that runs in CMD, though it does not have the speed or versitility of "Sam's Onboarder". That being said, you can comment out the initial windows form, and call only the onboard you want when you compile. 
+
