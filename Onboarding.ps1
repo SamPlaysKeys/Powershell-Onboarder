@@ -6,11 +6,6 @@ $iconBase64 = [Convert]::ToBase64String((Get-Content ".\Resources\bt_logo.ico" -
 $iconBytes       = [Convert]::FromBase64String($iconBase64)
 $stream1          = [System.IO.MemoryStream]::new($iconBytes, 0, $iconBytes.Length)
 
-
-Function ChrisOnboarder {
-    Start-Process -FilePath ".\Resources\chrisonboard.bat" -wait
-}
-
 Function SamOnboarder {
 
 #form setup
@@ -266,54 +261,5 @@ if (-not($restartpc.Checked)) {
 
 }
 
-Function Generate-Launcher {
+SamOnboarder
 
-#form1
-$form1 = New-Object System.Windows.Forms.Form
-$form1.Text =' '
-$form1.Width = 200
-$form1.Height = 180
-$form1.Icon = [System.Drawing.Icon]::FromHandle(([System.Drawing.Bitmap]::new($stream1).GetHIcon()))
-$form1.StartPosition = 'CenterScreen'
-$form1.FormBorderStyle = 'Fixed3D'
-$form1.MaximizeBox = $false
-$form1.MinimizeBox = $False
-$form1.AutoSize = $true
-
-
-$Labela = New-Object System.Windows.Forms.Label
-$Labela.Location = New-Object System.Drawing.Point(40,3)
-$Labela.Text = "Choose your Installer:"
-$labela.AutoSize = $true
-$form1.Controls.Add($Labela)
-
-$samButton = New-Object System.Windows.Forms.Button
-$samButton.Location = New-Object System.Drawing.Point(10,30)
-$samButton.Size = New-Object System.Drawing.Size(80,100)
-$samButton.Text = 'Sam'
-$samButton.Add_Click({
-    $form1.Dispose()
-    SamOnboarder
-})
-$form1.AcceptButton = $samButton
-$form1.Controls.Add($samButton)
-
-$chrisButton = New-Object System.Windows.Forms.Button
-$chrisButton.Location = New-Object System.Drawing.Point(100,30)
-$chrisButton.Size = New-Object System.Drawing.Size(80,100)
-$chrisButton.Text = 'Chris'
-$chrisButton.Add_Click({
-    $form1.Dispose()
-    ChrisOnboarder
-})
-$form1.AcceptButton = $chrisButton
-$form1.Controls.Add($chrisButton)
-
-$form1.ShowDialog()
-
-clear
-}
-
-#If you want to just run SamOnboarder, just uncomment the next line, and comment the line after it.
-#SamOnboarder
-Generate-Launcher
