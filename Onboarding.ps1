@@ -182,7 +182,7 @@ $result = $main_form.ShowDialog()
 
 clear
 
-#SamResults
+SamResults
 
 }
 
