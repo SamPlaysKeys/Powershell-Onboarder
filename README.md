@@ -6,3 +6,5 @@
  When in use, this is compiled into an EXE, I use Visual Studio to edit the manifest file, forcing it to search for an administrator credential.
 
  Alternatively, you could download the repository, and just use run the powershell from the same folder as the other resources, though I can update that in a future release.
+
+I do plan on rebuilding this into an intuitive C# application, but that has a ways to go.
