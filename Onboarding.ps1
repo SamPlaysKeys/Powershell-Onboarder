@@ -1,10 +1,12 @@
-﻿Add-Type -Assembly System.Windows.Forms
+Add-Type -Assembly System.Windows.Forms
 Add-Type -AssemblyName PresentationFramework
 [System.Windows.Forms.Application]::EnableVisualStyles()
-
-$iconBase64 = [Convert]::ToBase64String((Get-Content ".\Resources\bt_logo.ico" -Encoding Byte))
+$iconBase64 = [Convert]::ToBase64String((Get-Content ".\Resources\OBLogo.ico" -Encoding Byte))
 $iconBytes       = [Convert]::FromBase64String($iconBase64)
 $stream1          = [System.IO.MemoryStream]::new($iconBytes, 0, $iconBytes.Length)
+
+
+mode con:cols=18 lines=1
 
 Function SamOnboarder {
 
@@ -30,12 +32,12 @@ $serial = "Serial Number: " + $cname
 $pcname = "Current Name: " + $env:computername
 
 
-#btadmin account
+#administrator background
 $btac = New-Object System.Windows.Forms.CheckBox
-$btac.Location = New-Object System.Drawing.Point(10,10)
-$btac.Size = new-object System.Drawing.Size(200,30)
+$btac.Location = New-Object System.Drawing.Point(10,15)
+$btac.Size = new-object System.Drawing.Size(200,40)
 $btac.Checked = $false
-$btac.Text = "Is this a BTAdmin account?"
+$btac.Text = "Would you like the Admin Background?"
 $main_form.Controls.Add($btac)
 
 #programs
@@ -100,9 +102,9 @@ $Label3.AutoSize = $true
 $main_form.Controls.Add($Label3)
 
 $renamepc = New-Object System.Windows.Forms.CheckBox
-$renamepc.Location = New-Object System.Drawing.Point(528,55)
-$otherprog.AutoSize = $true
-$otherprog.Checked = $false
+$renamepc.Location = New-Object System.Drawing.Point(528,60)
+$renamepc.AutoSize = $true
+$renamepc.Checked = $false
 $main_form.Controls.Add($renamepc)
 
 $Lserial = New-Object System.Windows.Forms.Label
@@ -117,31 +119,38 @@ $Lpcname.Location  = New-Object System.Drawing.Point(320,96)
 $Lpcname.AutoSize = $true
 $main_form.Controls.Add($Lpcname)
 
+$qrename = New-Object System.Windows.Forms.Checkbox
+$qrename.Text = "Would you like to Quick Rename?"
+$qrename.Location  = New-Object System.Drawing.Point(320,125)
+$qrename.AutoSize = $true
+$qrename.Checked = $false
+$main_form.Controls.Add($qrename)
+
+$qrnexp = New-Object System.Windows.Forms.Label
+$qrnexp.Text = "(This is option appends the serial number after the name/prefix.)"
+$qrnexp.Location  = New-Object System.Drawing.Point(320,143)
+$qrnexp.AutoSize = $true
+$main_form.Controls.Add($qrnexp)
 
 #rename
 $Label4 = New-Object System.Windows.Forms.Label
-$Label4.Text = "If Yes, what would you like the new name to be?"
-$Label4.Location  = New-Object System.Drawing.Point(320,140)
+$Label4.Text = "What would you like the new name (or Prefix) to be?"
+$Label4.Location  = New-Object System.Drawing.Point(320,175)
 $Label4.AutoSize = $true
 $main_form.Controls.Add($Label4)
 
 $rename = New-Object System.Windows.Forms.Textbox
-$rename.Location  = New-Object System.Drawing.Point(320,158)
+$rename.Location  = New-Object System.Drawing.Point(320,193)
 $rename.AutoSize = $true
 $main_form.Controls.Add($rename)
 
 
 #restart
-$Label5 = New-Object System.Windows.Forms.Label
-$Label5.Text = "Would you like to restart the computer?"
-$Label5.Location  = New-Object System.Drawing.Point(320,210)
-$Label5.AutoSize = $true
-$main_form.Controls.Add($Label5)
-
 $restartpc = New-Object System.Windows.Forms.Checkbox
-$restartpc.Location = New-Object System.Drawing.Point(322,223)
-$otherprog.AutoSize = $true
-$otherprog.Checked = $false
+$restartpc.Location = New-Object System.Drawing.Point(320,250)
+$restartpc.AutoSize = $true
+$restartpc.Checked = $false
+$restartpc.Text = "Would you like to restart the computer?"
 $main_form.Controls.Add($restartpc)
 
 
@@ -173,8 +182,14 @@ $result = $main_form.ShowDialog()
 
 clear
 
+#SamResults
+
+}
 
 
+function SamResults {
+
+mode con:cols=90 lines=30
 
 #code results
 if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
@@ -186,7 +201,7 @@ if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
     #background change
     if ($btac.Checked) {
 
-Copy-Item .\Resources\Background1.jpg C:\Windows\
+Copy-Item .\Background1.jpg C:\Windows\
 $imgPath="C:\Windows\Background1.jpg"
 $code = @' 
 using System.Runtime.InteropServices; 
@@ -207,20 +222,21 @@ add-type $code
 
 #Apply the Change on the system 
 [Win32.Wallpaper]::SetWallpaper($imgPath)
+
 }
 
 #Program installs
 if ($adobe.Checked) {
-choco install adobereader -y | Out-Host
+choco install adobereader -y
 } 
 if ($chrome.Checked) {
-choco install googlechrome -y | Out-Host
+choco install googlechrome -y
 } 
 if ($7zip.Checked) {
-choco install 7zip -y | Out-Host
+choco install 7zip -y
 } 
 if ($teams.Checked) {
-choco install microsoft-teams -y | Out-Host
+choco install microsoft-teams -y
 } 
 
 #other program installs
@@ -230,7 +246,7 @@ if ($otherprog.checked) {
     $otherobj = $otherlist.split(",")
 
 	ForEach ($item in $otherobj) {
-		choco install $item.trim() -y | Out-Host
+		choco install $item.trim() -y
         }
 
     }
@@ -238,8 +254,14 @@ if ($otherprog.checked) {
 
 
 if ($renamepc.Checked) {
-    Rename-Computer -NewName $rename
+    if ($qrename.Checked) {
+        $qname = $rename + "-" + $cname
+        Rename-Computer -NewName $qname.Text
+    }
+    else {
+    Rename-Computer -NewName $rename.Text
     # For testing purposes: [void] [System.Windows.MessageBox]::Show( "AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", "Testing", "OK", "Warning" )
+    }
     }
 
 if ($restartpc.Checked) {
@@ -262,4 +284,3 @@ if (-not($restartpc.Checked)) {
 }
 
 SamOnboarder
-
