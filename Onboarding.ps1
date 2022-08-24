@@ -6,8 +6,6 @@ $iconBytes       = [Convert]::FromBase64String($iconBase64)
 $stream1          = [System.IO.MemoryStream]::new($iconBytes, 0, $iconBytes.Length)
 
 
-mode con:cols=18 lines=1
-
 Function SamOnboarder {
 
 #form setup
@@ -189,8 +187,6 @@ SamResults
 
 function SamResults {
 
-mode con:cols=90 lines=30
-
 #code results
 if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
     
@@ -255,8 +251,8 @@ if ($otherprog.checked) {
 
 if ($renamepc.Checked) {
     if ($qrename.Checked) {
-        $qname = $rename + "-" + $cname
-        Rename-Computer -NewName $qname.Text
+        $qname = $rename.text + "-" + $cname
+        Rename-Computer -NewName $qname
     }
     else {
     Rename-Computer -NewName $rename.Text
